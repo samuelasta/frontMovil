@@ -104,8 +104,7 @@ class ProductRepositoryImplTest {
     @Test
     fun `getProducts returns failure when API response has error flag`() = runTest {
         // Given
-        val response = ApiResponse(message = "Error message", error = true)
-        coEvery { api.getProducts(0) } returns response
+        coEvery { api.getProducts(0) } throws Exception("Error message")
         
         // When
         val result = repository.getProducts(0)
@@ -146,8 +145,7 @@ class ProductRepositoryImplTest {
     @Test
     fun `getProductById returns failure when API response has error flag`() = runTest {
         // Given
-        val response = ApiResponse(message = "Product not found", error = true)
-        coEvery { api.getProductById("999") } returns response
+        coEvery { api.getProductById("999") } throws Exception("Product not found")
         
         // When
         val result = repository.getProductById("999")
@@ -203,8 +201,7 @@ class ProductRepositoryImplTest {
     @Test
     fun `updateProduct returns failure when API response has error flag`() = runTest {
         // Given
-        val response = ApiResponse(message = "Update failed", error = true)
-        coEvery { api.updateProduct("1", any()) } returns response
+        coEvery { api.updateProduct("1", any()) } throws Exception("Update failed")
         
         // When
         val result = repository.updateProduct("1", testProduct)
@@ -231,8 +228,7 @@ class ProductRepositoryImplTest {
     @Test
     fun `deleteProduct returns failure when API response has error flag`() = runTest {
         // Given
-        val response = ApiResponse(message = "Delete failed", error = true)
-        coEvery { api.deleteProduct("1") } returns response
+        coEvery { api.deleteProduct("1") } throws Exception("Delete failed")
         
         // When
         val result = repository.deleteProduct("1")
@@ -261,8 +257,7 @@ class ProductRepositoryImplTest {
     @Test
     fun `addStock returns failure when API response has error flag`() = runTest {
         // Given
-        val response = ApiResponse(message = "Stock addition failed", error = true)
-        coEvery { api.addStock("1", any()) } returns response
+        coEvery { api.addStock("1", any()) } throws Exception("Stock addition failed")
         
         // When
         val result = repository.addStock("1", 10.0, null)

@@ -1,6 +1,13 @@
 package com.example.smartrestaurant.di
 
 import com.example.smartrestaurant.BuildConfig
+import com.example.smartrestaurant.data.remote.api.AdditionApi
+import com.example.smartrestaurant.data.remote.api.CategoryApi
+import com.example.smartrestaurant.data.remote.api.DishApi
+import com.example.smartrestaurant.data.remote.api.DrinkApi
+import com.example.smartrestaurant.data.remote.api.InventoryApi
+import com.example.smartrestaurant.data.remote.api.ProductApi
+import com.example.smartrestaurant.data.remote.api.SupplierApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -54,5 +61,47 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductApi(retrofit: Retrofit): ProductApi {
+        return retrofit.create(ProductApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSupplierApi(retrofit: Retrofit): SupplierApi {
+        return retrofit.create(SupplierApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryApi(retrofit: Retrofit): CategoryApi {
+        return retrofit.create(CategoryApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideDishApi(retrofit: Retrofit): DishApi {
+        return retrofit.create(DishApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideDrinkApi(retrofit: Retrofit): DrinkApi {
+        return retrofit.create(DrinkApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideAdditionApi(retrofit: Retrofit): AdditionApi {
+        return retrofit.create(AdditionApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideInventoryApi(retrofit: Retrofit): InventoryApi {
+        return retrofit.create(InventoryApi::class.java)
     }
 }

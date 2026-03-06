@@ -1,5 +1,6 @@
 package com.example.smartrestaurant.presentation.common.components
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,14 +10,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import coil.compose.rememberAsyncImagePainter
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun ImagePicker(
@@ -24,10 +31,52 @@ fun ImagePicker(
     onImageSelected: (Uri) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { onImageSelected(it) }
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            tempCameraUri?.let { onImageSelected(it) }
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Seleccionar imagen") },
+            text = { Text("Elige una opción para agregar la imagen") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    galleryLauncher.launch("image/*")
+                }) {
+                    Icon(Icons.Default.Image, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Galería")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    val uri = createImageUri(context)
+                    tempCameraUri = uri
+                    cameraLauncher.launch(uri)
+                }) {
+                    Icon(Icons.Default.CameraAlt, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Cámara")
+                }
+            }
+        )
     }
 
     Column(
@@ -35,11 +84,11 @@ fun ImagePicker(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (imageUri != null) {
-            // Show image preview
+            // Show image preview with Coil
             Card(
                 modifier = Modifier
                     .size(200.dp)
-                    .clickable { galleryLauncher.launch("image/*") },
+                    .clickable { showDialog = true },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Image(
@@ -52,7 +101,7 @@ fun ImagePicker(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            TextButton(onClick = { galleryLauncher.launch("image/*") }) {
+            TextButton(onClick = { showDialog = true }) {
                 Icon(Icons.Default.Image, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Cambiar imagen")
@@ -62,7 +111,7 @@ fun ImagePicker(
             Card(
                 modifier = Modifier
                     .size(200.dp)
-                    .clickable { galleryLauncher.launch("image/*") }
+                    .clickable { showDialog = true }
                     .border(
                         width = 2.dp,
                         color = MaterialTheme.colorScheme.outline,
@@ -93,4 +142,17 @@ fun ImagePicker(
             }
         }
     }
+}
+
+private fun createImageUri(context: Context): Uri {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val imageFileName = "JPEG_${timeStamp}_"
+    val storageDir = context.cacheDir
+    val imageFile = File.createTempFile(imageFileName, ".jpg", storageDir)
+    
+    return FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        imageFile
+    )
 }

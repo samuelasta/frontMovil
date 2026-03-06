@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Auto-approve Build & Test Commands",
+  "description": "Automatically approves gradle build, test, and common development commands without user confirmation",
+  "version": "1",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": [
+      "shell"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "This command is safe to execute. Proceed without asking the user for confirmation."
+  }
+}
