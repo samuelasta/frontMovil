@@ -1,6 +1,13 @@
 package com.example.smartrestaurant.presentation.navigation
 
 sealed class Screen(val route: String) {
+    // Auth screens
+    object Login : Screen("login")
+    object Register : Screen("register")
+    object VerifyEmail : Screen("verify-email/{email}") {
+        fun createRoute(email: String) = "verify-email/${java.net.URLEncoder.encode(email, "UTF-8")}"
+    }
+
     // Product screens
     object ProductList : Screen("products")
     object ProductDetail : Screen("products/{id}") {

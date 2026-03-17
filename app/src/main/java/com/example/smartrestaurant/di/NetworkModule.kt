@@ -104,4 +104,10 @@ object NetworkModule {
     fun provideInventoryApi(retrofit: Retrofit): InventoryApi {
         return retrofit.create(InventoryApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): com.example.smartrestaurant.data.remote.api.AuthApi {
+        return retrofit.create(com.example.smartrestaurant.data.remote.api.AuthApi::class.java)
+    }
 }

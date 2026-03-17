@@ -20,8 +20,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
-        // Base URL for API
-        buildConfigField("String", "BASE_URL", "\"https://api.smartrestaurant.com/\"")
+        // Base URL for API - 10.0.2.2 es localhost desde el emulador Android
+        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
     }
 
     buildTypes {
@@ -84,6 +84,9 @@ dependencies {
     
     // Coil
     implementation(libs.coil.compose)
+    
+    // Security
+    implementation(libs.androidx.security.crypto)
     
     // Testing
     testImplementation(libs.junit)
